@@ -1,0 +1,39 @@
+# Gradle
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Ignore IDEA project files
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/.gitignore
+*.iws
+
+# Ignore sensitive IDEA files
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/jsLibraryMappings.xml
+.idea/shelf/
+
+# Ignore other IDEA files
+.idea/libraries/
+*.iml
+*.ipr
+out/
+
+# VS Code
+.vscode/
+
+# Mac OS
+.DS_Store
+
+# Log files
+*.log
+
+# Local properties
+local.properties
+
+# Uploaded files
+uploads/

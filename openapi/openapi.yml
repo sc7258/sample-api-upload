@@ -1,0 +1,93 @@
+openapi: 3.0.0
+info:
+  title: Sample API
+  description: API First and TDD sample project
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local server
+
+# API 그룹(태그)에 대한 설명 추가
+tags:
+  - name: hello example
+    description: A sample API for getting a hello message
+  - name: upload & download
+    description: APIs for file upload and download
+
+paths:
+  /hello:
+    get:
+      tags:
+        - hello example
+      summary: Get a hello message
+      operationId: getHello
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hello'
+
+  /upload:
+    post:
+      tags:
+        - upload & download
+      summary: Upload a file
+      operationId: uploadFile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileUploadResponse'
+
+  /download/{fileName}:
+    get:
+      tags:
+        - upload & download
+      summary: Download a file
+      operationId: downloadFile
+      parameters:
+        - name: fileName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File downloaded successfully
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+
+components:
+  schemas:
+    Hello:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Hello, World!
+    FileUploadResponse:
+      type: object
+      properties:
+        fileName:
+          type: string
+        fileSize:
+          type: integer
+          # 타입을 Long으로 인식하도록 format: int64 추가
+          format: int64

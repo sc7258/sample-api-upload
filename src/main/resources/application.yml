@@ -1,0 +1,10 @@
+spring:
+  web:
+    resources:
+      # 프로젝트 루트의 openapi 폴더를 정적 리소스 위치로 추가합니다.
+      static-locations: file:./openapi/
+
+springdoc:
+  swagger-ui:
+    # static-locations에서 지정한 경로를 기준으로 openapi.yml 파일의 URL을 지정합니다.
+    url: /openapi.yml

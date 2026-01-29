@@ -1,0 +1,86 @@
+plugins {
+    // Spring Boot 버전을 3.3.1로 업그레이드
+    id 'org.springframework.boot' version '3.3.1'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.24'
+    id 'org.jetbrains.kotlin.plugin.spring' version '1.9.24'
+    // OpenAPI Generator 플러그인
+    id 'org.openapi.generator' version '7.5.0'
+}
+
+group = 'com.sc7258'
+version = '1.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+// Spring Boot 설정 추가: Main 클래스를 명시적으로 지정
+springBoot {
+    mainClass = 'com.example.sampleapiupload.SampleApiUploadApplication'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Import the Spring Boot BOM 버전을 3.3.1로 업그레이드
+    implementation platform('org.springframework.boot:spring-boot-dependencies:3.3.1')
+
+    // Spring Boot Web Starter
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Kotlin Support
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+    // JSR-305 annotations for OpenAPI Generator
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+    // Springdoc OpenAPI (Swagger UI)
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+
+    // Spring Boot Test Starter (includes JUnit, Mockito, etc.)
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+// OpenAPI Generator 태스크 설정
+tasks.named('openApiGenerate') {
+    generatorName = "kotlin-spring"
+    inputSpec = "$projectDir/openapi/openapi.yml"
+    outputDir = "$buildDir/generated"
+    apiPackage = "com.example.sampleapiupload.api"
+    modelPackage = "com.example.sampleapiupload.model"
+    configOptions = [
+        "delegatePattern": "true",
+        "useSpringBoot3": "true",
+        "documentationProvider": "springdoc",
+        // "interfaceOnly": "true", // 이 라인을 삭제하여 컨트롤러도 생성하도록 함
+        // 표준 옵션인 useTags를 사용하여 태그별로 API를 분리
+        "useTags": "true"
+    ]
+}
+
+// 생성된 소스를 빌드에 포함
+sourceSets {
+    main {
+        kotlin {
+            srcDirs += "$buildDir/generated/src/main/kotlin"
+        }
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+    kotlinOptions {
+        freeCompilerArgs += '-Xjsr305=strict'
+        jvmTarget = '17'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// compileKotlin 태스크가 실행되기 전에 openApiGenerate 태스크를 항상 먼저 실행하도록 설정
+tasks.named("compileKotlin").configure {
+    dependsOn("openApiGenerate")
+}
