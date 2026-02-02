@@ -59,6 +59,7 @@ class UploadDownloadApiDelegateImpl : UploadDownloadApiDelegate {
                 val contentType = Files.probeContentType(filePath) ?: "application/octet-stream"
 
                 // ★★★ 한글 파일 이름 인코딩 문제 해결 ★★★
+                // 참고: DB 연동 없이는 원본 파일명을 알 수 없으므로, 저장된 파일명(UUID 포함)으로 다운로드됩니다.
                 val contentDisposition = ContentDisposition.builder("attachment")
                     .filename(resource.filename!!, StandardCharsets.UTF_8)
                     .build()
